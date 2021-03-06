@@ -45,6 +45,8 @@ values ('{"name":"Organize", "description":" Organize the room"}', 'todo', 3, 't
 insert into typeahead_results (searchable, result_type, parent_id, parent_attr)
 values ('{"name":"Sleep", "description":" Sleep in the room"}', 'todo', 4, 'todo');
 
-
 UPDATE typeahead_results SET searchable_vector = to_tsvector('simple', searchable);
 CREATE INDEX ON typeahead_results USING GIN (searchable_vector);
+
+-- Search query
+SELECT * FROM typeahead_results WHERE to_tsquery('simple', 'room') @@ searchable_vector
