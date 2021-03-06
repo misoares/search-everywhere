@@ -6,7 +6,7 @@ insert into todo (name, description) values ('Sleep',' Sleep in the room');
 
 create table person (id serial, name varchar(255), description text);
 insert into person (name, description) values ('Joao','The portuguese guy');
-insert into person (name, description) values ('Miguel',' Another portuguese guybut with a room');
+insert into person (name, description) values ('Miguel',' Another portuguese guy but with a room');
 insert into person (name, description) values ('Alex','The Bulgarian guy');
 insert into person (name, description) values ('Matthias','The Swiss guy');
 
@@ -48,5 +48,9 @@ values ('{"name":"Sleep", "description":" Sleep in the room"}', 'todo', 4, 'todo
 UPDATE typeahead_results SET searchable_vector = to_tsvector('simple', searchable);
 CREATE INDEX ON typeahead_results USING GIN (searchable_vector);
 
--- Search query
+-- Search query results for keyword 'room'
 SELECT * FROM typeahead_results WHERE to_tsquery('simple', 'room') @@ searchable_vector
+-- Search on persons for keyword 'room'
+select person.* from person
+inner join typeahead_results on person.id=typeahead_results.parent_id and parent_attr='person'
+where to_tsquery('simple', 'room') @@ searchable_vector;
