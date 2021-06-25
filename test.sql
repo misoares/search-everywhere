@@ -49,8 +49,12 @@ UPDATE typeahead_results SET searchable_vector = to_tsvector('simple', searchabl
 CREATE INDEX ON typeahead_results USING GIN (searchable_vector);
 
 -- Search query results for keyword 'room'
-SELECT * FROM typeahead_results WHERE to_tsquery('simple', 'room') @@ searchable_vector
+SELECT * FROM typeahead_results WHERE to_tsquery('simple', 'room') @@ searchable_vector;
+
 -- Search on persons for keyword 'room'
 select person.* from person
 inner join typeahead_results on person.id=typeahead_results.parent_id and parent_attr='person'
 where to_tsquery('simple', 'room') @@ searchable_vector;
+
+-- Find where name is Joao or has no name
+SELECT * FROM typeahead_results WHERE (searchable->>'name'='Joao' or NOT(searchable ? 'name'))
